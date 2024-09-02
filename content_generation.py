@@ -1,4 +1,3 @@
-
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
@@ -24,6 +23,9 @@ Then, create EXACTLY 5 multiple-choice questions based on this content. Each que
 {evaluation_factors}
 
 The questions should be challenging but appropriate for the age group and Lexile level.
+
+Important: Prioritize creating questions for the evaluation factors with lower scores. Here are the current scores for each factor:
+{evaluation_scores}
 
 Format your response EXACTLY as follows:
 Content:
@@ -51,7 +53,7 @@ Generated Content and Questions:
 
 content_mcq_prompt = PromptTemplate(
     template=content_mcq_prompt_template,
-    input_variables=["age", "topic", "target_lexile", "evaluation_factors"]
+    input_variables=["age", "topic", "target_lexile", "evaluation_factors", "evaluation_scores"]
 )
 
 content_mcq_chain = LLMChain(llm=llm, prompt=content_mcq_prompt)
@@ -112,10 +114,16 @@ def parse_content_and_questions(result):
 
     return content, questions
 
-def generate_content_and_mcqs(age, topic, target_lexile):
+def generate_content_and_mcqs(age, topic, target_lexile, evaluation_scores):
     max_attempts = 3
     for attempt in range(max_attempts):
-        result = content_mcq_chain.run(age=age, topic=topic, target_lexile=target_lexile, evaluation_factors=", ".join(EVALUATION_FACTORS))
+        result = content_mcq_chain.run(
+            age=age, 
+            topic=topic, 
+            target_lexile=target_lexile, 
+            evaluation_factors=", ".join(EVALUATION_FACTORS),
+            evaluation_scores=", ".join([f"{factor}: {score}" for factor, score in evaluation_scores.items()])
+        )
         content, questions = parse_content_and_questions(result)
 
         if content and len(questions) == 5:
@@ -123,4 +131,3 @@ def generate_content_and_mcqs(age, topic, target_lexile):
 
     # If we've exhausted all attempts and still don't have valid content and questions
     return None, None
-

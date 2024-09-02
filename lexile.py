@@ -2,6 +2,7 @@
 
 import random
 from config import AGE_TO_LEXILE, EVALUATION_FACTORS
+from utils import get_session_question  # Updated import
 
 def get_initial_lexile(age):
     for age_range, lexile_range in AGE_TO_LEXILE.items():
@@ -21,27 +22,42 @@ def display_lexile_scale(current_lexile):
     scale_str = " ".join([f"[{level}L]" if level == current_lexile else f"{level}L" for level in scale])
     return scale_str
 
-def evaluate_answers(questions, user_answers):
+# In lexile.py
+from utils import get_session_question
+
+def evaluate_answers(session_id, user_answers):
     scores = {factor: 0 for factor in EVALUATION_FACTORS}
-    total_questions = len(questions)
+    total_questions = len(user_answers)
     correct_answers = 0
-    for q, answer in zip(questions, user_answers):
-        factor = q["evaluation_factor"].split('. ', 1)[-1]  # Remove any numbering
+
+    for i, user_answer in enumerate(user_answers, start=1):
+        question = get_session_question(session_id, i)
+        if not question:
+            print(f"Lexile File:::: Question {i} not found for session {session_id}")
+            continue
+
+        factor = question["evaluation_factor"]
         if factor not in scores:
             # Find the closest matching factor
             matching_factor = next((f for f in EVALUATION_FACTORS if f.lower() in factor.lower()), None)
             if matching_factor:
                 factor = matching_factor
             else:
+                print(f"No matching factor found for question {i}")
                 continue  # Skip this question if no matching factor is found
-        
-        if answer == q["correct_answer"]:
+
+        if user_answer == question["correct_answer"]:
             scores[factor] += 1
             correct_answers += 1
         else:
             scores[factor] -= 1
-    
+
+        print(f"Question {i}: User Answer = {user_answer}, Correct Answer = {question['correct_answer']}, Factor = {factor}, Score Change = {scores[factor]}")
+
     # Calculate percentage of correct answers
-    percentage_correct = (correct_answers / total_questions) * 100
-    
+    percentage_correct = (correct_answers / total_questions) * 100 if total_questions > 0 else 0
+
+    print(f"Evaluation Scores: {scores}")
+    print(f"Percentage Correct: {percentage_correct}")
+
     return scores, percentage_correct

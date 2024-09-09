@@ -1,10 +1,19 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
+import os
+from langchain_groq import ChatGroq
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
-from config import EVALUATION_FACTORS, API_KEY, MODEL_NAME
+from config import EVALUATION_FACTORS, GROQ_API_KEY, MODEL_NAME, LANGSMTH_API_KEY
 import re
 
-llm = ChatGoogleGenerativeAI(google_api_key=API_KEY, model=MODEL_NAME)
+# Set up LangSmith tracing
+os.environ["LANGCHAIN_API_KEY"] = LANGSMTH_API_KEY
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_PROJECT"] = "lexileap"
+
+llm = ChatGroq(
+    groq_api_key=GROQ_API_KEY,
+    model_name=MODEL_NAME,
+)
 
 content_mcq_prompt_template = """
 You are an AI assistant trained to generate educational content and multiple-choice questions (MCQs) for students.

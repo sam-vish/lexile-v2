@@ -39,8 +39,8 @@ SUPABASE_URL= "https://mfbktreohntpbfnfyjrf.supabase.co"
 SUPABASE_KEY= "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mYmt0cmVvaG50cGJmbmZ5anJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjMxMjg3ODMsImV4cCI6MjAzODcwNDc4M30.-A-ruD-tAuWVmQAHVL0fnL7DTLYKh9_Xke0awe4AoZk"
 
 # API configuration
-API_KEY = "AIzaSyDmf0d09V7jGsuN-kfZ6Di-bF0LbCyH7_I"
-MODEL_NAME = "gemini-1.0-pro"
+GROQ_API_KEY = "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"
+MODEL_NAME = "mixtral-8x7b-32768"
 
 # Content generation settings
 MIN_CONTENT_WORDS = 200
@@ -50,3 +50,6 @@ NUM_QUESTIONS = 10
 LEXILE_INCREASE = 25
 LEXILE_DECREASE = 25
 CORRECT_ANSWERS_THRESHOLD = 6
+
+# LangSmith configuration
+LANGSMTH_API_KEY = "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"

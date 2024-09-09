@@ -1,7 +1,7 @@
 langchain
 langchain-community
 streamlit
-langchain-google-genai
+langchain_groq
 supabase
 langchain-huggingface
 streamlit_option_menu
